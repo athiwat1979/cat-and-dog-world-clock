@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://athiwat1979.github.io/cat-and-dog-world-clock/sitemap.xml
