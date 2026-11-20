@@ -91,7 +91,7 @@
   .empty-callout::after { top: -8px; left: 21px; border-left-width: 8px; border-right-width: 8px; border-bottom: 9px solid #fff; }
   .empty-callout[hidden] { display: none; }
   .page-footer {
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    display: flex; order: 1; flex-wrap: wrap; align-items: center; justify-content: space-between;
     gap: 12px; padding: 12px 16px; color: #666b73; font-size: 12px;
   }
   .footer-links { display: flex; align-items: center; gap: 16px; margin-left: auto; }
@@ -273,22 +273,10 @@
   }
   .card-tools .edit-clock:hover { color: #1d4ed8; }
   .edit-clock svg { display: block; width: 17px; height: 17px; }
-  .mini-bar {
-    position: fixed; z-index: 10; right: 6px; bottom: 6px;
-    display: none; gap: 4px; opacity: 0; transition: opacity .15s;
-  }
-  body.mini .mini-bar { display: none; }
-  body.mini:hover .mini-bar, .mini-bar:focus-within { opacity: 1; }
-  .mini-bar button {
-    border: 0; border-radius: 999px; padding: 6px 10px; white-space: nowrap;
-    background: #ffffffed; color: #20232a; font-size: 12px;
-    box-shadow: 0 1px 4px #0004;
-  }
-  .mini-bar button[aria-pressed="true"] { background: #2563eb; color: #fff; }
-  body.mini { overflow: hidden; }
-  body.mini.locked { overflow: auto; }
+  body.mini { overflow-x: hidden; overflow-y: auto; }
   body.mini .topbar { display: none; }
   body.mini .page-footer { display: none; }
+  body.mini > section { display: none; }
   body.mini .grid { min-height: 100vh; gap: 2px; padding: 2px; align-content: center; }
   body.mini .clock-card {
     display: block;
@@ -436,11 +424,6 @@
     <a href="privacy.html">Privacy Policy</a>
   </nav>
 </footer>
-<div class="mini-bar">
-  <button id="lockSize" type="button" aria-pressed="false" title="Keep the current clock size while resizing the window">Lock Size</button>
-  <button id="miniAdd" type="button">+ Add</button>
-  <button id="openMain" type="button">Open Main Window</button>
-</div>
 <dialog id="addDialog">
   <form method="dialog" id="addForm">
     <h2>Add a city clock</h2>
@@ -784,7 +767,6 @@
   const offsetMinutesInput = document.getElementById('offsetMinutes');
   const clockCustomizeError = document.getElementById('clockCustomizeError');
   const saveClockCustomizeButton = document.getElementById('saveClockCustomize');
-  const lockButton = document.getElementById('lockSize');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const headerPetStage = document.getElementById('brandPetStage');
   const headerPetSlot = document.getElementById('brandPetSlot');
@@ -811,7 +793,6 @@
   }
   let headerPetIndex = 0;
   let headerPetPlaybackToken = 0;
-  let lockedWidth = null;
   let cards = [];
   let offsetTarget = null;
   const activeAlarms = new Map();
@@ -1946,8 +1927,8 @@
   }
 
   function fitMiniWindow() {
-    if (!isMini || lockedWidth !== null || !cards.length) return;
-    const minWidth = 24;
+    if (!isMini || !cards.length) return;
+    const minWidth = Math.min(24, Math.max(1, innerWidth - 4));
     const trial = 200;
     document.body.style.setProperty('--mini-width', trial + 'px');
     const ratio = Math.max(...cards.map((ref) => ref.card.getBoundingClientRect().height)) / trial;
@@ -1962,20 +1943,11 @@
     let width = Math.max(minWidth, Math.floor(best) - 2);
     document.body.style.setProperty('--mini-width', width + 'px');
     for (let i = 0; i < 40 && width > minWidth &&
-      (document.documentElement.scrollWidth > innerWidth + 1 || document.documentElement.scrollHeight > innerHeight + 1); i++) {
+      (document.documentElement.scrollWidth > innerWidth + 1 ||
+        document.documentElement.scrollHeight > innerHeight + 1); i++) {
       width = Math.max(minWidth, Math.floor(width * .95));
       document.body.style.setProperty('--mini-width', width + 'px');
     }
-  }
-
-  function setLocked(width) {
-    lockedWidth = width;
-    const locked = width !== null;
-    document.body.classList.toggle('locked', locked);
-    lockButton.setAttribute('aria-pressed', String(locked));
-    lockButton.textContent = locked ? 'Unlock Size' : 'Lock Size';
-    if (locked) document.body.style.setProperty('--mini-width', width + 'px');
-    else fitMiniWindow();
   }
 
   function updateCityOptions(query = citySearch.value) {
@@ -2124,7 +2096,6 @@
   }
 
   document.getElementById('addClock').addEventListener('click', openAddDialog);
-  document.getElementById('miniAdd').addEventListener('click', openAddDialog);
   citySearch.addEventListener('input', () => updateCityOptions());
   document.getElementById('clockCustomize').addEventListener('click', () => openClockCustomizeDialog());
   document.getElementById('cancelClockCustomize').addEventListener('click', () => clockCustomizeDialog.close());
@@ -2166,10 +2137,6 @@
     popup.resizeTo(340, 420);
     popup.focus();
   });
-  document.getElementById('openMain').addEventListener('click', () => {
-    window.open(baseUrl, '_blank');
-    window.close();
-  });
   document.getElementById('stopAlarm').addEventListener('click', () => {
     stopAllAlarms();
   });
@@ -2185,16 +2152,15 @@
     event.preventDefault();
     stopAllAlarms();
   });
-  lockButton.disabled = !isMini;
-  lockButton.addEventListener('click', () => {
-    if (lockedWidth !== null) {
-      setLocked(null);
-      return;
+  let miniResizeFrame = 0;
+  window.addEventListener('resize', () => {
+    if (!miniResizeFrame) {
+      miniResizeFrame = requestAnimationFrame(() => {
+        miniResizeFrame = 0;
+        fitMiniWindow();
+      });
     }
-    const first = grid.querySelector('.clock-card');
-    if (first) setLocked(Math.round(first.getBoundingClientRect().width));
   });
-  window.addEventListener('resize', () => setTimeout(fitMiniWindow, 60));
   reduceMotion.addEventListener('change', () => {
     const now = Date.now();
     cards.forEach((ref) => {
