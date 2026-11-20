@@ -2153,17 +2153,17 @@
     // Browser-level fullscreen has no standard API, so also detect screen-sized windows.
     const fullscreen = Boolean(document.fullscreenElement) || window.fullScreen === true ||
       (window.outerWidth >= window.screen.width - 1 && window.outerHeight >= window.screen.height - 1);
-    const popupName = fullscreen ? 'worldclock-mini-fullscreen' : 'worldclock-mini';
+    const popupName = fullscreen ? 'worldclock-mini-fullscreen-v2': 'worldclock-mini-v2';
     const popup = window.open(
       baseUrl + '?mini=1',
       popupName,
-      'popup=yes,location=no,toolbar=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=220,height=260'
+      'popup=yes,location=no,toolbar=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=340,height=420'
     );
     if (!popup) {
       alert('The pop-up was blocked. Allow pop-ups for this page and try again.');
       return;
     }
-    popup.resizeTo(220, 260);
+    popup.resizeTo(340, 420);
     popup.focus();
   });
   document.getElementById('openMain').addEventListener('click', () => {
