@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- SEO Basic Tags -->
 <title>Cat and Dog World Clock - Cute Analog World Time & Custom Colors</title>
-<meta name="description" content="A simple, customizable analog world clock featuring cute cat and dog animations, 50+ global cities, minimal mode, and daily color themes. Keep it running on your screen all day.">
+<meta name="description" content="A simple, customizable analog world clock featuring cute cat and dog animations, nearly 150 global cities, minimal mode, and automatic background colors. Keep it running on your screen all day.">
 <meta name="keywords" content="world clock, cat clock, dog clock, analog world clock, cute world clock, minimal clock, world time zones">
 <meta name="author" content="Athiwat">
 <link rel="canonical" href="https://athiwat1979.github.io/cat-and-dog-world-clock/">
@@ -77,11 +77,26 @@
   .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .add-clock-wrap { position: relative; }
   .empty-callout {
-    position: absolute; z-index: 12; top: calc(100% + 12px); left: 0;
-    width: min(250px, calc(100vw - 32px)); padding: 11px 14px;
+    position: absolute; z-index: 12; top: calc(100% + 44px); left: 0;
+    display: flex; align-items: center; gap: 12px;
+    width: min(430px, calc(100vw - 32px)); padding: 16px 18px;
     border: 1px solid #2563eb; border-radius: 14px; background: #fff;
-    color: #24334a; font-size: 13px; font-weight: 650; line-height: 1.35;
+    color: #24334a; font-size: clamp(16px, 1.6vw, 20px); font-weight: 700; line-height: 1.3;
     text-align: left; box-shadow: 0 6px 18px #1d4ed826;
+  }
+  @keyframes guideBlink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+  @keyframes guideTap { 0%, 100% { opacity: 1; transform: translateY(0); } 50% { opacity: .55; transform: translateY(5px); } }
+  @keyframes guidePointUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  .step-number {
+    display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center;
+    width: 42px; height: 42px; border-radius: 50%; background: #2563eb; color: #fff;
+    font-size: 24px; font-weight: 800; line-height: 1;
+  }
+  .empty-callout .step-number { width: 50px; height: 50px; font-size: 30px; }
+  .empty-callout .step-digit { animation: guideBlink 1s ease-in-out infinite; }
+  .empty-callout-hand {
+    position: absolute; top: -64px; left: 38px; font-size: 58px; line-height: 1;
+    animation: guidePointUp 1s ease-in-out infinite;
   }
   .empty-callout::before, .empty-callout::after {
     position: absolute; left: 20px; width: 0; height: 0; content: "";
@@ -90,6 +105,24 @@
   .empty-callout::before { top: -10px; border-bottom: 10px solid #2563eb; }
   .empty-callout::after { top: -8px; left: 21px; border-left-width: 8px; border-right-width: 8px; border-bottom: 9px solid #fff; }
   .empty-callout[hidden] { display: none; }
+  .search-city-guide {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 52px; margin: -2px 0 4px; color: #2563eb;
+  }
+  .search-city-guide[hidden], .step-number[hidden] { display: none; }
+  .search-city-hand { font-size: 58px; line-height: 1; animation: guideTap 1s ease-in-out infinite; }
+  #confirmAdd { position: relative; }
+  #confirmAdd .step-number[hidden] { display: none; }
+  #confirmAddHand[hidden] { display: none; }
+  #confirmAdd .step-number {
+    position: absolute; top: -15px; left: -12px; z-index: 1;
+    width: 30px; height: 30px; border: 2px solid #fff; font-size: 18px;
+  }
+  #confirmAddHand {
+    position: absolute; top: -54px; left: 50%; z-index: 1;
+    margin-left: -29px; font-size: 58px; line-height: 1;
+    animation: guideTap 1s ease-in-out infinite;
+  }
   .page-footer {
     display: flex; order: 1; flex-wrap: wrap; align-items: center; justify-content: space-between;
     gap: 12px; padding: 12px 16px; color: #666b73; font-size: 12px;
@@ -386,6 +419,7 @@
       opacity: 1;
     }
     .brand-pet-slot.is-appearing { animation: none; }
+    .empty-callout .step-digit, .empty-callout-hand, .search-city-hand, #confirmAddHand { animation: none; }
   }
   @media (max-width: 520px) {
     .topbar { align-items: flex-start; flex-direction: column; }
@@ -408,7 +442,11 @@
   <div class="actions">
     <div class="add-clock-wrap">
       <button class="button primary" id="addClock">+ Add Clock</button>
-      <p class="empty-callout" id="emptyMessage" role="status" hidden>No clocks yet. Add a city to get started.</p>
+      <p class="empty-callout" id="emptyMessage" role="status" hidden>
+        <span class="step-number" aria-hidden="true"><span class="step-digit">1</span></span>
+        <span>No clocks yet. Click Add Clock to start.</span>
+        <span class="empty-callout-hand" aria-hidden="true">👆</span>
+      </p>
     </div>
     <button class="button" id="clockCustomize" type="button">Clock Customize</button>
     <button class="button" id="openMini">Make it minimal</button>
@@ -428,14 +466,18 @@
 <dialog id="addDialog">
   <form method="dialog" id="addForm">
     <h2>Add a city clock</h2>
-    <label for="citySearch">Search cities</label>
+    <label for="citySearch">Search City</label>
+    <div class="search-city-guide" id="searchCityGuide" hidden aria-hidden="true">
+      <span class="step-number"><span class="step-digit">2</span></span>
+      <span class="search-city-hand">👇</span>
+    </div>
     <input id="citySearch" type="search" placeholder="Type a city name" autocomplete="off">
     <label for="citySelect">City</label>
     <select id="citySelect"></select>
     <p id="citySearchEmpty" class="dialog-error" role="status" hidden>No matching cities available.</p>
     <div class="dialog-actions">
       <button class="button" value="cancel">Cancel</button>
-      <button class="button primary" id="confirmAdd" value="default">Add Clock</button>
+      <button class="button primary" id="confirmAdd" value="default"><span class="step-number" id="confirmAddStep" hidden aria-hidden="true"><span class="step-digit">3</span></span><span id="confirmAddHand" hidden aria-hidden="true">👇</span>Add Clock</button>
     </div>
   </form>
 </dialog>
@@ -754,6 +796,11 @@
   const citySelect = document.getElementById('citySelect');
   const citySearch = document.getElementById('citySearch');
   const citySearchEmpty = document.getElementById('citySearchEmpty');
+  const searchCityGuide = document.getElementById('searchCityGuide');
+  const confirmAddButton = document.getElementById('confirmAdd');
+  const confirmAddStep = document.getElementById('confirmAddStep');
+  const confirmAddHand = document.getElementById('confirmAddHand');
+  let citySelectionMade = false;
   const clockCustomizeDialog = document.getElementById('clockCustomizeDialog');
   const clockCustomizeForm = document.getElementById('clockCustomizeForm');
   const clockCustomizeTitle = document.getElementById('clockCustomizeTitle');
@@ -1949,6 +1996,16 @@
       width = Math.max(minWidth, Math.floor(width * .95));
       document.body.style.setProperty('--mini-width', width + 'px');
     }
+    cards.forEach((ref) => {
+      const cityName = ref.card.querySelector('.city-name');
+      cityName.style.fontSize = '';
+      const availableWidth = Math.max(0, cityName.clientWidth - 8);
+      const textWidth = cityName.scrollWidth;
+      const fontSize = parseFloat(getComputedStyle(cityName).fontSize);
+      if (textWidth > availableWidth && availableWidth > 0 && textWidth > 0) {
+        cityName.style.fontSize = (fontSize * availableWidth / textWidth) + 'px';
+      }
+    });
   }
 
   function updateCityOptions(query = citySearch.value) {
@@ -1974,11 +2031,24 @@
     citySelect.replaceChildren(...groups);
     citySearchEmpty.hidden = available.length !== 0;
     citySelect.hidden = available.length === 0;
-    document.getElementById('confirmAdd').disabled = available.length === 0;
+    confirmAddButton.disabled = available.length === 0;
+    updateAddDialogSteps();
+  }
+
+  function updateAddDialogSteps() {
+    const readyToAdd = !confirmAddButton.disabled &&
+      (citySearch.value.trim().length > 0 || citySelectionMade);
+    searchCityGuide.hidden = confirmAddButton.disabled || readyToAdd;
+    confirmAddStep.hidden = !readyToAdd;
+    confirmAddHand.hidden = !readyToAdd;
   }
 
   function openAddDialog() {
     citySearch.value = '';
+    citySelectionMade = false;
+    searchCityGuide.hidden = false;
+    confirmAddStep.hidden = true;
+    confirmAddHand.hidden = true;
     updateCityOptions();
     if (typeof dialog.showModal === 'function') dialog.showModal();
     citySearch.focus();
@@ -2097,7 +2167,14 @@
   }
 
   document.getElementById('addClock').addEventListener('click', openAddDialog);
-  citySearch.addEventListener('input', () => updateCityOptions());
+  citySearch.addEventListener('input', () => {
+    citySelectionMade = false;
+    updateCityOptions();
+  });
+  citySelect.addEventListener('change', () => {
+    citySelectionMade = true;
+    updateAddDialogSteps();
+  });
   document.getElementById('clockCustomize').addEventListener('click', () => openClockCustomizeDialog());
   document.getElementById('cancelClockCustomize').addEventListener('click', () => clockCustomizeDialog.close());
   clockCustomizeForm.addEventListener('submit', (event) => {
@@ -2121,16 +2198,36 @@
     dialog.close();
     render();
   });
-  document.getElementById('openMini').addEventListener('click', () => {
+  document.getElementById('openMini').addEventListener('click', async () => {
+    let popup = null;
+    if (document.fullscreenElement) {
+      popup = window.open(
+        'about:blank',
+        'worldclock-mini-fullscreen-v2',
+        'popup=yes,location=no,toolbar=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=340,height=420'
+      );
+      if (!popup) {
+        alert('The pop-up was blocked. Exit Full Screen, allow pop-ups for this page, and try again.');
+        return;
+      }
+      try {
+        await document.exitFullscreen();
+      } catch (_) {}
+    }
+
     // Browser-level fullscreen has no standard API, so also detect screen-sized windows.
     const fullscreen = Boolean(document.fullscreenElement) || window.fullScreen === true ||
       (window.outerWidth >= window.screen.width - 1 && window.outerHeight >= window.screen.height - 1);
     const popupName = fullscreen ? 'worldclock-mini-fullscreen-v2': 'worldclock-mini-v2';
-    const popup = window.open(
-      baseUrl + '?mini=1',
-      popupName,
-      'popup=yes,location=no,toolbar=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=340,height=420'
-    );
+    if (!popup) {
+      popup = window.open(
+        baseUrl + '?mini=1',
+        popupName,
+        'popup=yes,location=no,toolbar=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=340,height=420'
+      );
+    } else {
+      popup.location.href = baseUrl + '?mini=1';
+    }
     if (!popup) {
       alert('The pop-up was blocked. Allow pop-ups for this page and try again.');
       return;
@@ -2201,10 +2298,15 @@
   <p id="manualIntro">Welcome to <strong>Cat and Dog World Clock</strong>—a simple, customizable analog world clock designed to stay open on your screen all day.</p>
 
   <ul id="manualList" style="padding-left: 20px;">
-    <li><strong id="manualCitiesTitle">Track 50+ Global Cities:</strong> <span id="manualCitiesText">View real-time analog clocks for major cities around the world at a single glance.</span></li>
-    <li><strong id="manualMinimalTitle">Make It Minimal Mode:</strong> <span id="manualMinimalText">Click the <em>Make It Minimal</em> button to shrink and simplify the layout for a distraction-free workspace.</span></li>
-    <li><strong id="manualColorsTitle">Custom Colors &amp; Daily Themes:</strong> <span id="manualColorsText">Change background colors easily, use automatic daily color themes, or set specific time-based themes (like dark mode at 19:30).</span></li>
-    <li><strong id="manualAnimationsTitle">Cat &amp; Dog Animations:</strong> <span id="manualAnimationsText">Keep the clock running to catch cute cat and dog animations appearing at scheduled times throughout the day.</span></li>
+    <li><strong id="manualCitiesTitle">Nearly 150 Cities in 3 Steps:</strong> <span id="manualCitiesText">① Click + Add Clock → ② Search for and select a city → ③ Click Add Clock in the dialog.</span></li>
+    <li><strong id="manualMinimalTitle">Make It Minimal Mode:</strong> <span id="manualMinimalText">Click the <em>Make It Minimal</em> button to shrink and simplify the layout for a distraction-free workspace. If your browser or screen is in Full Screen mode, exit Full Screen first.</span></li>
+    <li><strong id="manualColorsTitle">Automatic Background Colors:</strong> <span id="manualColorsText">The clock card background changes automatically according to each city's local time: at 06:00, 12:00, 18:00, and 00:00.</span></li>
+    <li><strong id="manualAnimationsTitle">Cat &amp; Dog Animations:</strong> <span id="manualAnimationsText">Cute cat and dog animations appear at scheduled times. To turn them off, click the <u>Animation</u> button on that clock.</span></li>
+    <li><strong id="manualAlarmsTitle">Multiple Alarms:</strong> <span id="manualAlarmsText">Click Alarm Set on a clock, then click Add alarm to add multiple alarms. Set each time and switch it On.</span></li>
+    <li><strong id="manualFaceThemeTitle">Clock Face Themes:</strong> <span id="manualFaceThemeText">Click a clock face and choose a style to change its appearance.</span></li>
+    <li><strong id="manualDeleteTitle">Remove a Clock:</strong> <span id="manualDeleteText">Hover over the upper-right corner of a clock card to reveal Delete, then click it.</span></li>
+    <li><strong id="manualStopAlarmTitle">Stop a Ringing Alarm:</strong> <span id="manualStopAlarmText">When an alarm rings, click Stop alarm in the on-screen dialog to silence it.</span></li>
+    <li><strong id="manualCustomClockTitle">Custom City Clocks:</strong> <span id="manualCustomClockText">Click Clock Customize, enter any city name, and set its GMT offset manually (−12:00 to +14:00).</span></li>
     <li><strong id="manualSaveTitle">Auto-Save Settings:</strong> <span id="manualSaveText">Your preferred cities, window size, and color settings are saved automatically for continuous daily use.</span></li>
   </ul>
 </section>
@@ -2215,92 +2317,142 @@
     en: {
       lang: "English", title: "How to Use Cat and Dog World Clock",
       intro: "Welcome to <strong>Cat and Dog World Clock</strong>—a simple, customizable analog world clock designed to stay open on your screen all day.",
-      citiesTitle: "Track 50+ Global Cities:", citiesText: "View real-time analog clocks for major cities around the world at a single glance.",
-      minimalTitle: "Make It Minimal Mode:", minimalText: "Click the <em>Make It Minimal</em> button to shrink and simplify the layout for a distraction-free workspace.",
-      colorsTitle: "Custom Colors & Daily Themes:", colorsText: "Change background colors easily, use automatic daily color themes, or set specific time-based themes (like dark mode at 19:30).",
-      animationsTitle: "Cat & Dog Animations:", animationsText: "Keep the clock running to catch cute cat and dog animations appearing at scheduled times throughout the day.",
-      saveTitle: "Auto-Save Settings:", saveText: "Your preferred cities, window size, and color settings are saved automatically for continuous daily use."
+      citiesTitle: "Nearly 150 Cities in 3 Steps:", citiesText: "① Click + Add Clock → ② Search for and select a city → ③ Click Add Clock in the dialog.",
+      minimalTitle: "Make It Minimal Mode:", minimalText: "Click the <em>Make It Minimal</em> button to shrink and simplify the layout for a distraction-free workspace. If your browser or screen is in Full Screen mode, exit Full Screen first.",
+      colorsTitle: "Automatic Background Colors:", colorsText: "The clock card background changes automatically according to each city's local time: at 06:00, 12:00, 18:00, and 00:00.",
+      animationsTitle: "Cat & Dog Animations:", animationsText: "Cute cat and dog animations appear at scheduled times. To turn them off, click the <u>Animation</u> button on that clock.",
+      saveTitle: "Auto-Save Settings:", saveText: "Your preferred cities, window size, and color settings are saved automatically for continuous daily use.",
+      alarmsTitle: "Multiple Alarms:", alarmsText: "Click Alarm Set on a clock, then click Add alarm to add multiple alarms. Set each time and switch it On.",
+      faceThemeTitle: "Clock Face Themes:", faceThemeText: "Click a clock face and choose a style to change its appearance.",
+      deleteTitle: "Remove a Clock:", deleteText: "Hover over the upper-right corner of a clock card to reveal Delete, then click it.",
+      stopAlarmTitle: "Stop a Ringing Alarm:", stopAlarmText: "When an alarm rings, click Stop alarm in the on-screen dialog to silence it.",
+      customClockTitle: "Custom City Clocks:", customClockText: "Click Clock Customize, enter any city name, and set its GMT offset manually (−12:00 to +14:00)."
     },
     th: {
       lang: "ภาษา", title: "วิธีใช้นาฬิกาโลก Cat and Dog",
       intro: "ยินดีต้อนรับสู่ <strong>Cat and Dog World Clock</strong> นาฬิกาอนาล็อกแบบโค้งที่ปรับแต่งได้ง่าย ใช้งานต่อเนื่องบนหน้าจอตลอดทั้งวัน",
-      citiesTitle: "ติดตามเมืองทั่วโลกกว่า 50 เมือง:", citiesText: "ดูเวลาจริงแบบนาฬิกาอนาล็อกของเมืองสำคัญทั่วโลกได้ในหน้าจอเดียว",
-      minimalTitle: "โหมดย่อหน้าจอ:", minimalText: "กดปุ่ม <em>Make It Minimal</em> เพื่อย่อและทำให้หน้าจอเรียบง่าย เหมาะกับพื้นที่ทำงานที่ไม่ต้องการสิ่งรบกวน",
-      colorsTitle: "ปรับสีและธีมรายวัน:", colorsText: "เปลี่ยนสีพื้นหลังได้ง่าย ใช้ธีมสีรายวันอัตโนมัติ หรือตั้งธีมตามเวลาที่ต้องการ เช่น โหมดมืดเวลา 19:30",
-      animationsTitle: "ภาพเคลื่อนไหวแมวและสุนัข:", animationsText: "เปิดนาฬิกาไว้เพื่อรับชมภาพเคลื่อนไหวแมวและสุนัขที่ปรากฏตามเวลาที่กำหนดตลอดทั้งวัน",
-      saveTitle: "บันทึกการตั้งค่าอัตโนมัติ:", saveText: "เมืองที่เลือก ขนาดหน้าต่าง และการตั้งค่าสีจะถูกบันทึกอัตโนมัติ เพื่อใช้งานต่อเนื่องทุกวัน"
+      citiesTitle: "ดูเวลาเมืองต่างๆ ทั่วโลกเกือบ 150 เมืองใน 3 ขั้นตอน:", citiesText: "① กด + Add Clock → ② ค้นหาและเลือกเมืองในช่อง Search City → ③ กด Add Clock ในหน้าต่าง",
+      minimalTitle: "โหมดย่อหน้าจอ:", minimalText: "กดปุ่ม <em>Make It Minimal</em> เพื่อย่อและทำให้หน้าจอเรียบง่าย หากกำลังอยู่ในโหมดเต็มหน้าจอของเบราว์เซอร์หรือหน้าจอ ให้ออกจากโหมดเต็มหน้าจอก่อน",
+      colorsTitle: "สีพื้นหลังเปลี่ยนอัตโนมัติ:", colorsText: "สีพื้นหลังของการ์ดนาฬิกาจะเปลี่ยนตามเวลาท้องถิ่นของแต่ละเมืองโดยอัตโนมัติ เวลา 06:00, 12:00, 18:00 และ 00:00",
+      animationsTitle: "ภาพเคลื่อนไหวแมวและสุนัข:", animationsText: "ภาพเคลื่อนไหวแมวและสุนัขจะแสดงตามเวลาที่กำหนด หากไม่ต้องการให้แสดง ให้กดปุ่ม <u>Animation</u> บนนาฬิกาเรือนนั้นเพื่อปิด",
+      saveTitle: "บันทึกการตั้งค่าอัตโนมัติ:", saveText: "เมืองที่เลือก ขนาดหน้าต่าง และการตั้งค่าสีจะถูกบันทึกอัตโนมัติ เพื่อใช้งานต่อเนื่องทุกวัน",
+      alarmsTitle: "ตั้งนาฬิกาปลุกได้หลายเวลา:", alarmsText: "กดปุ่ม Alarm Set บนนาฬิกา แล้วกด Add alarm เพื่อเพิ่มรายการ ตั้งเวลาแต่ละรายการและกด On เพื่อเปิดใช้งาน",
+      faceThemeTitle: "เปลี่ยนธีมหน้าปัด:", faceThemeText: "คลิกที่หน้าปัดนาฬิกา แล้วเลือกรูปแบบที่ต้องการเพื่อเปลี่ยนหน้าตา",
+      deleteTitle: "ลบนาฬิกา:", deleteText: "เลื่อนเมาส์ไปที่มุมขวาบนของการ์ดนาฬิกาเพื่อแสดงปุ่ม Delete แล้วคลิกปุ่มนั้น",
+      stopAlarmTitle: "ปิดเสียงนาฬิกาปลุก:", stopAlarmText: "เมื่อเสียงปลุกดัง ให้กดปุ่ม Stop alarm ในหน้าต่างที่แสดงบนหน้าจอเพื่อหยุดเสียง",
+      customClockTitle: "สร้างนาฬิกาเมืองกำหนดเอง:", customClockText: "กด Clock Customize ใส่ชื่อเมืองได้ตามต้องการ แล้วกำหนด GMT offset เองได้ตั้งแต่ −12:00 ถึง +14:00"
     },
     ja: {
       lang: "言語", title: "Cat and Dog World Clock の使い方",
       intro: "<strong>Cat and Dog World Clock</strong>へようこそ。一日中画面で使える、シンプルでカスタマイズ可能なアナログ世界時計です。",
-      citiesTitle: "50以上の世界都市を表示:", citiesText: "世界各地の主要都市のリアルタイムアナログ時計を一画面で確認できます。",
-      minimalTitle: "ミニマルモード:", minimalText: "<em>Make It Minimal</em> ボタンをクリックすると、レイアウトを縮小して集中しやすいシンプルな表示になります。",
-      colorsTitle: "背景色とデイリーテーマ:", colorsText: "背景色を簡単に変更したり、毎日のテーマを自動で切り替えたり、19:30のダークモードなど時間に応じたテーマを設定できます。",
-      animationsTitle: "猫と犬のアニメーション:", animationsText: "時計を表示したままにすると、一日を通して予定された時刻にかわいい猫や犬のアニメーションが表示されます。",
-      saveTitle: "設定の自動保存:", saveText: "選択した都市、ウィンドウサイズ、色の設定は継続的に使えるよう自動保存されます。"
+      citiesTitle: "3ステップで世界約150都市の時刻を表示:", citiesText: "① + Add Clock をクリック → ② 都市を検索して選択 → ③ ダイアログの Add Clock をクリックします。",
+      minimalTitle: "ミニマルモード:", minimalText: "<em>Make It Minimal</em> ボタンをクリックすると、レイアウトを縮小して集中しやすいシンプルな表示になります。ブラウザーまたは画面がフルスクリーンの場合は、先にフルスクリーンを終了してください。",
+      colorsTitle: "背景色の自動変更:", colorsText: "時計カードの背景色は各都市の現地時刻に合わせて自動で変わります。変更時刻は06:00、12:00、18:00、00:00です。",
+      animationsTitle: "猫と犬のアニメーション:", animationsText: "かわいい猫や犬のアニメーションが決まった時刻に表示されます。表示したくない場合は、その時計の <u>Animation</u> ボタンをクリックしてオフにしてください。",
+      saveTitle: "設定の自動保存:", saveText: "選択した都市、ウィンドウサイズ、色の設定は継続的に使えるよう自動保存されます。",
+      alarmsTitle: "複数のアラーム:", alarmsText: "時計の Alarm Set をクリックし、Add alarm から複数のアラームを追加できます。それぞれ時刻を設定し、On にしてください。",
+      faceThemeTitle: "文字盤テーマの変更:", faceThemeText: "文字盤をクリックしてスタイルを選ぶと、見た目を変更できます。",
+      deleteTitle: "時計の削除:", deleteText: "時計カードの右上にマウスを合わせると Delete ボタンが表示されます。クリックすると時計を削除します。",
+      stopAlarmTitle: "アラームを止める:", stopAlarmText: "アラームが鳴ったら、画面に表示されるダイアログの Stop alarm をクリックして音を止めてください。",
+      customClockTitle: "都市名を指定した時計:", customClockText: "Clock Customize をクリックし、好きな都市名と GMT オフセット（−12:00〜+14:00）を設定できます。"
     },
     zh: {
       lang: "语言", title: "如何使用 Cat and Dog 世界时钟",
       intro: "欢迎使用 <strong>Cat and Dog World Clock</strong>——一款简单、可自定义、适合整日显示在屏幕上的模拟世界时钟。",
-      citiesTitle: "查看50多个全球城市:", citiesText: "在同一画面实时查看世界主要城市的模拟时钟。",
-      minimalTitle: "极简模式:", minimalText: "点击 <em>Make It Minimal</em> 按钮可缩小并简化界面，营造不受干扰的工作环境。",
-      colorsTitle: "自定义颜色与每日主题:", colorsText: "轻松更改背景色，使用自动每日主题，或设置特定时段主题（例如19:30切换到深色模式）。",
-      animationsTitle: "猫狗动画:", animationsText: "保持时钟运行，即可在一天中的指定时间看到可爱的猫狗动画。",
-      saveTitle: "自动保存设置:", saveText: "您选择的城市、窗口大小和颜色设置会自动保存，方便每天继续使用。"
+      citiesTitle: "三步查看全球近150个城市的时间:", citiesText: "① 点击 + Add Clock → ② 搜索并选择城市 → ③ 点击对话框中的 Add Clock。",
+      minimalTitle: "极简模式:", minimalText: "点击 <em>Make It Minimal</em> 按钮可缩小并简化界面，营造不受干扰的工作环境。如果浏览器或屏幕处于全屏模式，请先退出全屏。",
+      colorsTitle: "背景颜色自动变化:", colorsText: "时钟卡片的背景颜色会根据各城市的当地时间自动变化，时间为06:00、12:00、18:00和00:00。",
+      animationsTitle: "猫狗动画:", animationsText: "可爱的猫狗动画会在指定时间出现。如果不想显示动画，请点击该时钟上的 <u>Animation</u> 按钮将其关闭。",
+      saveTitle: "自动保存设置:", saveText: "您选择的城市、窗口大小和颜色设置会自动保存，方便每天继续使用。",
+      alarmsTitle: "设置多个闹钟:", alarmsText: "点击时钟上的 Alarm Set，再点击 Add alarm 即可添加多个闹钟。设置每个时间并切换为 On。",
+      faceThemeTitle: "更换表盘主题:", faceThemeText: "点击表盘并选择样式即可更改外观。",
+      deleteTitle: "删除时钟:", deleteText: "将鼠标移到时钟卡片右上角，出现 Delete 按钮后点击即可删除。",
+      stopAlarmTitle: "停止响铃:", stopAlarmText: "闹钟响起时，点击屏幕弹窗中的 Stop alarm 按钮即可停止声音。",
+      customClockTitle: "自定义城市时钟:", customClockText: "点击 Clock Customize，输入任意城市名称并手动设置 GMT 时差（−12:00 至 +14:00）。"
     },
     hi: {
       lang: "भाषा", title: "Cat and Dog World Clock का उपयोग कैसे करें",
       intro: "<strong>Cat and Dog World Clock</strong> में आपका स्वागत है—यह एक सरल और अनुकूलन योग्य एनालॉग वर्ल्ड क्लॉक है, जिसे पूरे दिन स्क्रीन पर खुला रखा जा सकता है।",
-      citiesTitle: "50+ वैश्विक शहरों का समय:", citiesText: "दुनिया के प्रमुख शहरों की रियल-टाइम एनालॉग घड़ियाँ एक ही स्क्रीन पर देखें।",
-      minimalTitle: "मिनिमल मोड:", minimalText: "लेआउट छोटा और सरल बनाने के लिए <em>Make It Minimal</em> बटन पर क्लिक करें।",
-      colorsTitle: "कस्टम रंग और दैनिक थीम:", colorsText: "पृष्ठभूमि रंग आसानी से बदलें, स्वचालित दैनिक थीम उपयोग करें या तय समय की थीम सेट करें, जैसे 19:30 पर डार्क मोड।",
-      animationsTitle: "बिल्ली और कुत्ते के एनिमेशन:", animationsText: "घड़ी चालू रखें और पूरे दिन निर्धारित समय पर दिखने वाले प्यारे एनिमेशन देखें।",
-      saveTitle: "सेटिंग्स अपने आप सेव हों:", saveText: "चुने गए शहर, विंडो आकार और रंग सेटिंग्स लगातार उपयोग के लिए अपने आप सेव हो जाती हैं।"
+      citiesTitle: "3 चरणों में दुनिया के लगभग 150 शहरों का समय:", citiesText: "① + Add Clock पर क्लिक करें → ② शहर खोजें और चुनें → ③ डायलॉग में Add Clock पर क्लिक करें।",
+      minimalTitle: "मिनिमल मोड:", minimalText: "लेआउट छोटा और सरल बनाने के लिए <em>Make It Minimal</em> बटन पर क्लिक करें। ब्राउज़र या स्क्रीन फुल स्क्रीन में हो तो पहले फुल स्क्रीन बंद करें।",
+      colorsTitle: "पृष्ठभूमि का रंग अपने आप बदलता है:", colorsText: "घड़ी कार्ड का पृष्ठभूमि रंग हर शहर के स्थानीय समय के अनुसार अपने आप बदलता है: 06:00, 12:00, 18:00 और 00:00 बजे।",
+      animationsTitle: "बिल्ली और कुत्ते के एनिमेशन:", animationsText: "प्यारे बिल्ली और कुत्ते के एनिमेशन तय समय पर दिखाई देते हैं। इन्हें बंद करने के लिए उस घड़ी पर <u>Animation</u> बटन क्लिक करें।",
+      saveTitle: "सेटिंग्स अपने आप सेव हों:", saveText: "चुने गए शहर, विंडो आकार और रंग सेटिंग्स लगातार उपयोग के लिए अपने आप सेव हो जाती हैं।",
+      alarmsTitle: "कई अलार्म सेट करें:", alarmsText: "घड़ी पर Alarm Set क्लिक करें, फिर कई अलार्म जोड़ने के लिए Add alarm क्लिक करें। हर अलार्म का समय सेट करें और उसे On करें।",
+      faceThemeTitle: "घड़ी के डायल की थीम:", faceThemeText: "दिखावट बदलने के लिए घड़ी के डायल पर क्लिक करें और अपनी पसंद की शैली चुनें।",
+      deleteTitle: "घड़ी हटाएँ:", deleteText: "Delete बटन दिखाने के लिए माउस को घड़ी कार्ड के ऊपरी-दाएँ कोने पर ले जाएँ, फिर उस पर क्लिक करें।",
+      stopAlarmTitle: "बजता अलार्म बंद करें:", stopAlarmText: "अलार्म बजने पर आवाज़ बंद करने के लिए स्क्रीन पर आए डायलॉग में Stop alarm क्लिक करें।",
+      customClockTitle: "कस्टम शहर की घड़ी:", customClockText: "Clock Customize क्लिक करें, अपनी पसंद का शहर नाम लिखें और GMT ऑफ़सेट खुद सेट करें (−12:00 से +14:00)।"
     },
     id: {
       lang: "Bahasa", title: "Cara Menggunakan Cat and Dog World Clock",
       intro: "Selamat datang di <strong>Cat and Dog World Clock</strong>—jam dunia analog yang sederhana dan dapat disesuaikan untuk tetap terbuka di layar Anda sepanjang hari.",
-      citiesTitle: "Lacak 50+ Kota Dunia:", citiesText: "Lihat jam analog waktu nyata untuk kota-kota utama dunia dalam satu layar.",
-      minimalTitle: "Mode Minimal:", minimalText: "Klik tombol <em>Make It Minimal</em> untuk mengecilkan dan menyederhanakan tampilan agar bebas gangguan.",
-      colorsTitle: "Warna & Tema Harian:", colorsText: "Ubah warna latar dengan mudah, gunakan tema warna harian otomatis, atau tetapkan tema berdasarkan waktu tertentu, seperti mode gelap pukul 19.30.",
-      animationsTitle: "Animasi Kucing & Anjing:", animationsText: "Biarkan jam terus berjalan untuk melihat animasi kucing dan anjing lucu yang muncul pada jadwal selama sehari.",
-      saveTitle: "Simpan Pengaturan Otomatis:", saveText: "Kota pilihan, ukuran jendela, dan pengaturan warna akan tersimpan otomatis untuk penggunaan harian."
+      citiesTitle: "Lihat Hampir 150 Kota dalam 3 Langkah:", citiesText: "① Klik + Add Clock → ② Cari dan pilih kota → ③ Klik Add Clock pada dialog.",
+      minimalTitle: "Mode Minimal:", minimalText: "Klik tombol <em>Make It Minimal</em> untuk mengecilkan dan menyederhanakan tampilan agar bebas gangguan. Jika browser atau layar berada dalam mode layar penuh, keluar dari mode layar penuh terlebih dahulu.",
+      colorsTitle: "Warna Latar Berubah Otomatis:", colorsText: "Warna latar kartu jam berubah otomatis mengikuti waktu setempat setiap kota: pukul 06.00, 12.00, 18.00, dan 00.00.",
+      animationsTitle: "Animasi Kucing & Anjing:", animationsText: "Animasi kucing dan anjing yang lucu muncul pada waktu tertentu. Untuk mematikannya, klik tombol <u>Animation</u> pada jam tersebut.",
+      saveTitle: "Simpan Pengaturan Otomatis:", saveText: "Kota pilihan, ukuran jendela, dan pengaturan warna akan tersimpan otomatis untuk penggunaan harian.",
+      alarmsTitle: "Beberapa Alarm:", alarmsText: "Klik Alarm Set pada jam, lalu klik Add alarm untuk menambahkan beberapa alarm. Atur waktu masing-masing dan aktifkan dengan memilih On.",
+      faceThemeTitle: "Tema Tampilan Jam:", faceThemeText: "Klik tampilan jam dan pilih gaya untuk mengubah tampilannya.",
+      deleteTitle: "Hapus Jam:", deleteText: "Arahkan mouse ke sudut kanan atas kartu jam hingga tombol Delete muncul, lalu klik tombol tersebut.",
+      stopAlarmTitle: "Hentikan Alarm yang Berbunyi:", stopAlarmText: "Saat alarm berbunyi, klik Stop alarm pada dialog di layar untuk menghentikan suaranya.",
+      customClockTitle: "Jam Kota Kustom:", customClockText: "Klik Clock Customize, masukkan nama kota sesuka Anda, lalu atur offset GMT secara manual (−12:00 hingga +14:00)."
     },
     vi: {
       lang: "Ngôn ngữ", title: "Cách sử dụng Cat and Dog World Clock",
       intro: "Chào mừng đến với <strong>Cat and Dog World Clock</strong>—đồng hồ thế giới analog đơn giản, có thể tùy chỉnh và luôn mở trên màn hình cả ngày.",
-      citiesTitle: "Theo dõi hơn 50 thành phố:", citiesText: "Xem đồng hồ analog thời gian thực của các thành phố lớn trên thế giới trong cùng một màn hình.",
-      minimalTitle: "Chế độ tối giản:", minimalText: "Nhấn nút <em>Make It Minimal</em> để thu nhỏ và đơn giản hóa giao diện, tránh làm phân tâm.",
-      colorsTitle: "Màu tùy chỉnh và chủ đề hàng ngày:", colorsText: "Thay đổi màu nền dễ dàng, dùng chủ đề màu tự động hàng ngày hoặc đặt chủ đề theo thời gian cụ thể, ví dụ chế độ tối lúc 19:30.",
-      animationsTitle: "Hoạt ảnh mèo và chó:", animationsText: "Giữ đồng hồ chạy để xem hoạt ảnh mèo và chó dễ thương xuất hiện theo lịch trình trong suốt cả ngày.",
-      saveTitle: "Tự động lưu cài đặt:", saveText: "Thành phố, kích thước cửa sổ và cài đặt màu của bạn được lưu tự động để sử dụng hàng ngày."
+      citiesTitle: "Xem giờ gần 150 thành phố qua 3 bước:", citiesText: "① Nhấn + Add Clock → ② Tìm và chọn thành phố → ③ Nhấn Add Clock trong hộp thoại.",
+      minimalTitle: "Chế độ tối giản:", minimalText: "Nhấn nút <em>Make It Minimal</em> để thu nhỏ và đơn giản hóa giao diện, tránh làm phân tâm. Nếu trình duyệt hoặc màn hình đang ở chế độ toàn màn hình, hãy thoát chế độ toàn màn hình trước.",
+      colorsTitle: "Màu nền tự động thay đổi:", colorsText: "Màu nền của thẻ đồng hồ tự động thay đổi theo giờ địa phương của từng thành phố vào lúc 06:00, 12:00, 18:00 và 00:00.",
+      animationsTitle: "Hoạt ảnh mèo và chó:", animationsText: "Hoạt ảnh mèo và chó dễ thương xuất hiện theo lịch trình. Nếu không muốn xem, hãy nhấn nút <u>Animation</u> trên đồng hồ đó để tắt.",
+      saveTitle: "Tự động lưu cài đặt:", saveText: "Thành phố, kích thước cửa sổ và cài đặt màu của bạn được lưu tự động để sử dụng hàng ngày.",
+      alarmsTitle: "Đặt nhiều báo thức:", alarmsText: "Nhấn Alarm Set trên đồng hồ, sau đó nhấn Add alarm để thêm nhiều báo thức. Đặt giờ cho từng báo thức và chuyển sang On để bật.",
+      faceThemeTitle: "Đổi giao diện mặt đồng hồ:", faceThemeText: "Nhấn vào mặt đồng hồ rồi chọn kiểu để thay đổi giao diện.",
+      deleteTitle: "Xóa đồng hồ:", deleteText: "Di chuột đến góc trên bên phải của thẻ đồng hồ để hiện nút Delete, sau đó nhấn nút đó.",
+      stopAlarmTitle: "Tắt báo thức đang kêu:", stopAlarmText: "Khi chuông reo, nhấn Stop alarm trong hộp thoại trên màn hình để tắt âm thanh.",
+      customClockTitle: "Đồng hồ thành phố tùy chỉnh:", customClockText: "Nhấn Clock Customize, nhập tên thành phố tùy ý và tự đặt độ lệch GMT (từ −12:00 đến +14:00)."
     },
     ko: {
       lang: "언어", title: "Cat and Dog World Clock 사용 방법",
       intro: "<strong>Cat and Dog World Clock</strong>에 오신 것을 환영합니다. 화면에서 하루 종일 사용할 수 있는 간단하고 맞춤형 아날로그 세계 시계입니다.",
-      citiesTitle: "50개 이상 도시 확인:", citiesText: "전 세계 주요 도시의 실시간 아날로그 시계를 한 화면에서 볼 수 있습니다.",
-      minimalTitle: "미니멀 모드:", minimalText: "<em>Make It Minimal</em> 버튼을 눌러 레이아웃을 축소하고 방해 없는 작업 환경으로 단순화하세요.",
-      colorsTitle: "사용자 지정 색상 및 일일 테마:", colorsText: "배경색을 쉽게 변경하거나 매일 자동 테마를 사용하고, 19:30의 다크 모드처럼 시간별 테마를 설정할 수 있습니다.",
-      animationsTitle: "고양이와 강아지 애니메이션:", animationsText: "시계를 계속 실행하면 하루 중 예약된 시간에 귀여운 고양이와 강아지 애니메이션을 볼 수 있습니다.",
-      saveTitle: "설정 자동 저장:", saveText: "선택한 도시, 창 크기 및 색상 설정은 매일 계속 사용할 수 있도록 자동 저장됩니다."
+      citiesTitle: "3단계로 전 세계 약 150개 도시 시간 확인:", citiesText: "① + Add Clock을 누르세요 → ② 도시를 검색하고 선택하세요 → ③ 대화상자에서 Add Clock을 누르세요.",
+      minimalTitle: "미니멀 모드:", minimalText: "<em>Make It Minimal</em> 버튼을 눌러 레이아웃을 축소하고 방해 없는 작업 환경으로 단순화하세요. 브라우저 또는 화면이 전체 화면 모드이면 먼저 전체 화면을 종료하세요.",
+      colorsTitle: "배경색 자동 변경:", colorsText: "시계 카드의 배경색은 각 도시의 현지 시간에 따라 06:00, 12:00, 18:00, 00:00에 자동으로 바뀝니다.",
+      animationsTitle: "고양이와 강아지 애니메이션:", animationsText: "귀여운 고양이와 강아지 애니메이션이 정해진 시간에 나타납니다. 원하지 않으면 해당 시계의 <u>Animation</u> 버튼을 눌러 끄세요.",
+      saveTitle: "설정 자동 저장:", saveText: "선택한 도시, 창 크기 및 색상 설정은 매일 계속 사용할 수 있도록 자동 저장됩니다.",
+      alarmsTitle: "여러 개의 알람 설정:", alarmsText: "시계에서 Alarm Set을 누른 다음 Add alarm을 눌러 알람을 여러 개 추가하세요. 각각 시간을 설정하고 On으로 켜세요.",
+      faceThemeTitle: "시계판 테마 변경:", faceThemeText: "시계판을 클릭한 후 스타일을 선택해 모양을 바꿀 수 있습니다.",
+      deleteTitle: "시계 삭제:", deleteText: "시계 카드의 오른쪽 위 모서리에 마우스를 올리면 Delete 버튼이 나타납니다. 버튼을 눌러 삭제하세요.",
+      stopAlarmTitle: "울리는 알람 끄기:", stopAlarmText: "알람이 울리면 화면에 표시된 대화상자에서 Stop alarm을 눌러 소리를 끄세요.",
+      customClockTitle: "사용자 지정 도시 시계:", customClockText: "Clock Customize를 누르고 원하는 도시 이름을 입력한 뒤 GMT 오프셋을 직접 설정하세요(−12:00~+14:00)."
     },
     es: {
       lang: "Idioma", title: "Cómo usar Cat and Dog World Clock",
       intro: "Bienvenido a <strong>Cat and Dog World Clock</strong>, un reloj mundial analógico sencillo y personalizable diseñado para permanecer abierto en la pantalla todo el día.",
-      citiesTitle: "Más de 50 ciudades:", citiesText: "Consulta relojes analógicos en tiempo real de las principales ciudades del mundo de un solo vistazo.",
-      minimalTitle: "Modo minimalista:", minimalText: "Haz clic en <em>Make It Minimal</em> para reducir y simplificar el diseño y trabajar sin distracciones.",
-      colorsTitle: "Colores personalizados y temas diarios:", colorsText: "Cambia fácilmente el fondo, usa temas automáticos diarios o establece temas por hora, como el modo oscuro a las 19:30.",
-      animationsTitle: "Animaciones de gatos y perros:", animationsText: "Mantén el reloj abierto para ver animaciones adorables en horarios programados durante el día.",
-      saveTitle: "Guardar ajustes automáticamente:", saveText: "Tus ciudades, el tamaño de ventana y los colores preferidos se guardan automáticamente para un uso diario continuo."
+      citiesTitle: "Casi 150 ciudades en 3 pasos:", citiesText: "① Haz clic en + Add Clock → ② Busca y selecciona una ciudad → ③ Haz clic en Add Clock en el cuadro de diálogo.",
+      minimalTitle: "Modo minimalista:", minimalText: "Haz clic en <em>Make It Minimal</em> para reducir y simplificar el diseño y trabajar sin distracciones. Si el navegador o la pantalla está en modo de pantalla completa, sal primero de ese modo.",
+      colorsTitle: "Cambio automático del color de fondo:", colorsText: "El fondo de cada reloj cambia automáticamente según la hora local de su ciudad: a las 06:00, 12:00, 18:00 y 00:00.",
+      animationsTitle: "Animaciones de gatos y perros:", animationsText: "Las animaciones aparecen en horarios programados. Si no las quieres, haz clic en el botón <u>Animation</u> de ese reloj para desactivarlas.",
+      saveTitle: "Guardar ajustes automáticamente:", saveText: "Tus ciudades, el tamaño de ventana y los colores preferidos se guardan automáticamente para un uso diario continuo.",
+      alarmsTitle: "Varias alarmas:", alarmsText: "Haz clic en Alarm Set en un reloj y luego en Add alarm para añadir varias alarmas. Configura la hora de cada una y actívala con On.",
+      faceThemeTitle: "Temas de la esfera:", faceThemeText: "Haz clic en la esfera del reloj y elige un estilo para cambiar su aspecto.",
+      deleteTitle: "Eliminar un reloj:", deleteText: "Pasa el cursor por la esquina superior derecha de la tarjeta para mostrar Delete y haz clic en ese botón.",
+      stopAlarmTitle: "Detener una alarma:", stopAlarmText: "Cuando suene una alarma, haz clic en Stop alarm en el cuadro de diálogo de la pantalla para silenciarla.",
+      customClockTitle: "Reloj de ciudad personalizado:", customClockText: "Haz clic en Clock Customize, escribe el nombre que quieras y configura manualmente el desfase GMT (de −12:00 a +14:00)."
     },
     pt: {
       lang: "Idioma", title: "Como usar o Cat and Dog World Clock",
       intro: "Bem-vindo ao <strong>Cat and Dog World Clock</strong>, um relógio mundial analógico simples e personalizável para deixar aberto na tela o dia inteiro.",
-      citiesTitle: "Mais de 50 cidades globais:", citiesText: "Veja relógios analógicos em tempo real das principais cidades do mundo em uma única tela.",
-      minimalTitle: "Modo mínimo:", minimalText: "Clique em <em>Make It Minimal</em> para reduzir e simplificar o layout em um ambiente de trabalho sem distrações.",
-      colorsTitle: "Cores personalizadas e temas diários:", colorsText: "Altere o fundo facilmente, use temas diários automáticos ou defina temas por horário, como o modo escuro às 19:30.",
-      animationsTitle: "Animações de gatos e cães:", animationsText: "Mantenha o relógio aberto para ver animações fofas de gatos e cães em horários programados ao longo do dia.",
-      saveTitle: "Salvar configurações automaticamente:", saveText: "As cidades escolhidas, o tamanho da janela e as cores preferidas são salvas automaticamente para uso diário."
+      citiesTitle: "Quase 150 cidades em 3 passos:", citiesText: "① Clique em + Add Clock → ② Pesquise e selecione uma cidade → ③ Clique em Add Clock na caixa de diálogo.",
+      minimalTitle: "Modo mínimo:", minimalText: "Clique em <em>Make It Minimal</em> para reduzir e simplificar o layout em um ambiente de trabalho sem distrações. Se o navegador ou a tela estiver em tela cheia, saia desse modo primeiro.",
+      colorsTitle: "Mudança automática da cor de fundo:", colorsText: "A cor de fundo de cada relógio muda automaticamente de acordo com o horário local da cidade: às 06:00, 12:00, 18:00 e 00:00.",
+      animationsTitle: "Animações de gatos e cães:", animationsText: "As animações aparecem em horários programados. Se não quiser vê-las, clique no botão <u>Animation</u> daquele relógio para desativá-las.",
+      saveTitle: "Salvar configurações automaticamente:", saveText: "As cidades escolhidas, o tamanho da janela e as cores preferidas são salvas automaticamente para uso diário.",
+      alarmsTitle: "Vários alarmes:", alarmsText: "Clique em Alarm Set no relógio e depois em Add alarm para adicionar vários alarmes. Defina o horário de cada um e ative-o em On.",
+      faceThemeTitle: "Temas do mostrador:", faceThemeText: "Clique no mostrador e escolha um estilo para mudar sua aparência.",
+      deleteTitle: "Excluir um relógio:", deleteText: "Passe o mouse sobre o canto superior direito do cartão do relógio para exibir Delete e clique nesse botão.",
+      stopAlarmTitle: "Parar um alarme tocando:", stopAlarmText: "Quando o alarme tocar, clique em Stop alarm na caixa de diálogo exibida na tela para silenciar o som.",
+      customClockTitle: "Relógio de cidade personalizado:", customClockText: "Clique em Clock Customize, digite o nome de qualquer cidade e defina manualmente o deslocamento GMT (de −12:00 a +14:00)."
     }
   };
 
@@ -2320,9 +2472,19 @@
     document.getElementById("manualColorsTitle").textContent = text.colorsTitle;
     document.getElementById("manualColorsText").textContent = text.colorsText;
     document.getElementById("manualAnimationsTitle").textContent = text.animationsTitle;
-    document.getElementById("manualAnimationsText").textContent = text.animationsText;
+    document.getElementById("manualAnimationsText").innerHTML = text.animationsText;
     document.getElementById("manualSaveTitle").textContent = text.saveTitle;
     document.getElementById("manualSaveText").textContent = text.saveText;
+    document.getElementById("manualAlarmsTitle").textContent = text.alarmsTitle;
+    document.getElementById("manualAlarmsText").textContent = text.alarmsText;
+    document.getElementById("manualFaceThemeTitle").textContent = text.faceThemeTitle;
+    document.getElementById("manualFaceThemeText").textContent = text.faceThemeText;
+    document.getElementById("manualDeleteTitle").textContent = text.deleteTitle;
+    document.getElementById("manualDeleteText").textContent = text.deleteText;
+    document.getElementById("manualStopAlarmTitle").textContent = text.stopAlarmTitle;
+    document.getElementById("manualStopAlarmText").textContent = text.stopAlarmText;
+    document.getElementById("manualCustomClockTitle").textContent = text.customClockTitle;
+    document.getElementById("manualCustomClockText").textContent = text.customClockText;
   }
 
   let savedLanguage = "en";
