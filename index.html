@@ -422,6 +422,7 @@
   <nav class="footer-links" aria-label="Footer">
     <a href="about.html">About</a>
     <a href="privacy.html">Privacy Policy</a>
+    <a href="https://github.com/athiwat1979/cat-and-dog-world-clock/issues/new?title=Feedback%20or%20Feature%20Request" target="_blank" rel="noopener noreferrer">Feedback / Request</a>
   </nav>
 </footer>
 <dialog id="addDialog">
@@ -2178,18 +2179,170 @@
 })();
 </script>
 <!-- Simple User Manual Section -->
-<section style="max-width: 800px; margin: 40px auto; padding: 20px; font-family: sans-serif; line-height: 1.6; color: #333; background: rgba(255, 255, 255, 0.85); border-radius: 12px;">
-  <h2 style="margin-top: 0; font-size: 1.4rem;">How to Use Cat and Dog World Clock</h2>
-  <p>Welcome to <strong>Cat and Dog World Clock</strong>—a simple, customizable analog world clock designed to stay open on your screen all day.</p>
-  
-  <ul style="padding-left: 20px;">
-    <li><strong>Track 50+ Global Cities:</strong> View real-time analog clocks for major cities around the world at a single glance.</li>
-    <li><strong>Make It Minimal Mode:</strong> Click the <em>Make It Minimal</em> button to shrink and simplify the layout for a distraction-free workspace.</li>
-    <li><strong>Custom Colors & Daily Themes:</strong> Change background colors easily, use automatic daily color themes, or set specific time-based themes (like dark mode at 19:30).</li>
-    <li><strong>Cat & Dog Animations:</strong> Keep the clock running to catch cute cat and dog animations appearing at scheduled times throughout the day.</li>
-    <li><strong>Auto-Save Settings:</strong> Your preferred cities, window size, and color settings are saved automatically for continuous daily use.</li>
+<section id="worldClockManual" style="max-width: 800px; margin: 40px auto; padding: 20px; font-family: sans-serif; line-height: 1.6; color: #333; background: rgba(255, 255, 255, 0.85); border-radius: 12px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px;">
+    <h2 id="manualTitle" style="margin: 0; font-size: 1.4rem;">How to Use Cat and Dog World Clock</h2>
+    <label for="manualLanguage" style="display: flex; align-items: center; gap: 8px; margin: 0; white-space: nowrap; font-size: 14px; font-weight: 700;">
+      <span id="manualLanguageLabel">Language</span>
+      <select id="manualLanguage" aria-label="Manual language" style="width: auto; min-width: 155px; padding: 7px 10px; border: 1px solid #c9cdd4; border-radius: 999px; background: #fff;">
+        <option value="en">English</option>
+        <option value="th">ภาษาไทย</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+        <option value="hi">हिन्दी</option>
+        <option value="id">Bahasa Indonesia</option>
+        <option value="vi">Tiếng Việt</option>
+        <option value="ko">한국어</option>
+        <option value="es">Español</option>
+        <option value="pt">Português</option>
+      </select>
+    </label>
+  </div>
+  <p id="manualIntro">Welcome to <strong>Cat and Dog World Clock</strong>—a simple, customizable analog world clock designed to stay open on your screen all day.</p>
+
+  <ul id="manualList" style="padding-left: 20px;">
+    <li><strong id="manualCitiesTitle">Track 50+ Global Cities:</strong> <span id="manualCitiesText">View real-time analog clocks for major cities around the world at a single glance.</span></li>
+    <li><strong id="manualMinimalTitle">Make It Minimal Mode:</strong> <span id="manualMinimalText">Click the <em>Make It Minimal</em> button to shrink and simplify the layout for a distraction-free workspace.</span></li>
+    <li><strong id="manualColorsTitle">Custom Colors &amp; Daily Themes:</strong> <span id="manualColorsText">Change background colors easily, use automatic daily color themes, or set specific time-based themes (like dark mode at 19:30).</span></li>
+    <li><strong id="manualAnimationsTitle">Cat &amp; Dog Animations:</strong> <span id="manualAnimationsText">Keep the clock running to catch cute cat and dog animations appearing at scheduled times throughout the day.</span></li>
+    <li><strong id="manualSaveTitle">Auto-Save Settings:</strong> <span id="manualSaveText">Your preferred cities, window size, and color settings are saved automatically for continuous daily use.</span></li>
   </ul>
 </section>
+
+<script>
+(() => {
+  const manualTranslations = {
+    en: {
+      lang: "English", title: "How to Use Cat and Dog World Clock",
+      intro: "Welcome to <strong>Cat and Dog World Clock</strong>—a simple, customizable analog world clock designed to stay open on your screen all day.",
+      citiesTitle: "Track 50+ Global Cities:", citiesText: "View real-time analog clocks for major cities around the world at a single glance.",
+      minimalTitle: "Make It Minimal Mode:", minimalText: "Click the <em>Make It Minimal</em> button to shrink and simplify the layout for a distraction-free workspace.",
+      colorsTitle: "Custom Colors & Daily Themes:", colorsText: "Change background colors easily, use automatic daily color themes, or set specific time-based themes (like dark mode at 19:30).",
+      animationsTitle: "Cat & Dog Animations:", animationsText: "Keep the clock running to catch cute cat and dog animations appearing at scheduled times throughout the day.",
+      saveTitle: "Auto-Save Settings:", saveText: "Your preferred cities, window size, and color settings are saved automatically for continuous daily use."
+    },
+    th: {
+      lang: "ภาษา", title: "วิธีใช้นาฬิกาโลก Cat and Dog",
+      intro: "ยินดีต้อนรับสู่ <strong>Cat and Dog World Clock</strong> นาฬิกาอนาล็อกแบบโค้งที่ปรับแต่งได้ง่าย ใช้งานต่อเนื่องบนหน้าจอตลอดทั้งวัน",
+      citiesTitle: "ติดตามเมืองทั่วโลกกว่า 50 เมือง:", citiesText: "ดูเวลาจริงแบบนาฬิกาอนาล็อกของเมืองสำคัญทั่วโลกได้ในหน้าจอเดียว",
+      minimalTitle: "โหมดย่อหน้าจอ:", minimalText: "กดปุ่ม <em>Make It Minimal</em> เพื่อย่อและทำให้หน้าจอเรียบง่าย เหมาะกับพื้นที่ทำงานที่ไม่ต้องการสิ่งรบกวน",
+      colorsTitle: "ปรับสีและธีมรายวัน:", colorsText: "เปลี่ยนสีพื้นหลังได้ง่าย ใช้ธีมสีรายวันอัตโนมัติ หรือตั้งธีมตามเวลาที่ต้องการ เช่น โหมดมืดเวลา 19:30",
+      animationsTitle: "ภาพเคลื่อนไหวแมวและสุนัข:", animationsText: "เปิดนาฬิกาไว้เพื่อรับชมภาพเคลื่อนไหวแมวและสุนัขที่ปรากฏตามเวลาที่กำหนดตลอดทั้งวัน",
+      saveTitle: "บันทึกการตั้งค่าอัตโนมัติ:", saveText: "เมืองที่เลือก ขนาดหน้าต่าง และการตั้งค่าสีจะถูกบันทึกอัตโนมัติ เพื่อใช้งานต่อเนื่องทุกวัน"
+    },
+    ja: {
+      lang: "言語", title: "Cat and Dog World Clock の使い方",
+      intro: "<strong>Cat and Dog World Clock</strong>へようこそ。一日中画面で使える、シンプルでカスタマイズ可能なアナログ世界時計です。",
+      citiesTitle: "50以上の世界都市を表示:", citiesText: "世界各地の主要都市のリアルタイムアナログ時計を一画面で確認できます。",
+      minimalTitle: "ミニマルモード:", minimalText: "<em>Make It Minimal</em> ボタンをクリックすると、レイアウトを縮小して集中しやすいシンプルな表示になります。",
+      colorsTitle: "背景色とデイリーテーマ:", colorsText: "背景色を簡単に変更したり、毎日のテーマを自動で切り替えたり、19:30のダークモードなど時間に応じたテーマを設定できます。",
+      animationsTitle: "猫と犬のアニメーション:", animationsText: "時計を表示したままにすると、一日を通して予定された時刻にかわいい猫や犬のアニメーションが表示されます。",
+      saveTitle: "設定の自動保存:", saveText: "選択した都市、ウィンドウサイズ、色の設定は継続的に使えるよう自動保存されます。"
+    },
+    zh: {
+      lang: "语言", title: "如何使用 Cat and Dog 世界时钟",
+      intro: "欢迎使用 <strong>Cat and Dog World Clock</strong>——一款简单、可自定义、适合整日显示在屏幕上的模拟世界时钟。",
+      citiesTitle: "查看50多个全球城市:", citiesText: "在同一画面实时查看世界主要城市的模拟时钟。",
+      minimalTitle: "极简模式:", minimalText: "点击 <em>Make It Minimal</em> 按钮可缩小并简化界面，营造不受干扰的工作环境。",
+      colorsTitle: "自定义颜色与每日主题:", colorsText: "轻松更改背景色，使用自动每日主题，或设置特定时段主题（例如19:30切换到深色模式）。",
+      animationsTitle: "猫狗动画:", animationsText: "保持时钟运行，即可在一天中的指定时间看到可爱的猫狗动画。",
+      saveTitle: "自动保存设置:", saveText: "您选择的城市、窗口大小和颜色设置会自动保存，方便每天继续使用。"
+    },
+    hi: {
+      lang: "भाषा", title: "Cat and Dog World Clock का उपयोग कैसे करें",
+      intro: "<strong>Cat and Dog World Clock</strong> में आपका स्वागत है—यह एक सरल और अनुकूलन योग्य एनालॉग वर्ल्ड क्लॉक है, जिसे पूरे दिन स्क्रीन पर खुला रखा जा सकता है।",
+      citiesTitle: "50+ वैश्विक शहरों का समय:", citiesText: "दुनिया के प्रमुख शहरों की रियल-टाइम एनालॉग घड़ियाँ एक ही स्क्रीन पर देखें।",
+      minimalTitle: "मिनिमल मोड:", minimalText: "लेआउट छोटा और सरल बनाने के लिए <em>Make It Minimal</em> बटन पर क्लिक करें।",
+      colorsTitle: "कस्टम रंग और दैनिक थीम:", colorsText: "पृष्ठभूमि रंग आसानी से बदलें, स्वचालित दैनिक थीम उपयोग करें या तय समय की थीम सेट करें, जैसे 19:30 पर डार्क मोड।",
+      animationsTitle: "बिल्ली और कुत्ते के एनिमेशन:", animationsText: "घड़ी चालू रखें और पूरे दिन निर्धारित समय पर दिखने वाले प्यारे एनिमेशन देखें।",
+      saveTitle: "सेटिंग्स अपने आप सेव हों:", saveText: "चुने गए शहर, विंडो आकार और रंग सेटिंग्स लगातार उपयोग के लिए अपने आप सेव हो जाती हैं।"
+    },
+    id: {
+      lang: "Bahasa", title: "Cara Menggunakan Cat and Dog World Clock",
+      intro: "Selamat datang di <strong>Cat and Dog World Clock</strong>—jam dunia analog yang sederhana dan dapat disesuaikan untuk tetap terbuka di layar Anda sepanjang hari.",
+      citiesTitle: "Lacak 50+ Kota Dunia:", citiesText: "Lihat jam analog waktu nyata untuk kota-kota utama dunia dalam satu layar.",
+      minimalTitle: "Mode Minimal:", minimalText: "Klik tombol <em>Make It Minimal</em> untuk mengecilkan dan menyederhanakan tampilan agar bebas gangguan.",
+      colorsTitle: "Warna & Tema Harian:", colorsText: "Ubah warna latar dengan mudah, gunakan tema warna harian otomatis, atau tetapkan tema berdasarkan waktu tertentu, seperti mode gelap pukul 19.30.",
+      animationsTitle: "Animasi Kucing & Anjing:", animationsText: "Biarkan jam terus berjalan untuk melihat animasi kucing dan anjing lucu yang muncul pada jadwal selama sehari.",
+      saveTitle: "Simpan Pengaturan Otomatis:", saveText: "Kota pilihan, ukuran jendela, dan pengaturan warna akan tersimpan otomatis untuk penggunaan harian."
+    },
+    vi: {
+      lang: "Ngôn ngữ", title: "Cách sử dụng Cat and Dog World Clock",
+      intro: "Chào mừng đến với <strong>Cat and Dog World Clock</strong>—đồng hồ thế giới analog đơn giản, có thể tùy chỉnh và luôn mở trên màn hình cả ngày.",
+      citiesTitle: "Theo dõi hơn 50 thành phố:", citiesText: "Xem đồng hồ analog thời gian thực của các thành phố lớn trên thế giới trong cùng một màn hình.",
+      minimalTitle: "Chế độ tối giản:", minimalText: "Nhấn nút <em>Make It Minimal</em> để thu nhỏ và đơn giản hóa giao diện, tránh làm phân tâm.",
+      colorsTitle: "Màu tùy chỉnh và chủ đề hàng ngày:", colorsText: "Thay đổi màu nền dễ dàng, dùng chủ đề màu tự động hàng ngày hoặc đặt chủ đề theo thời gian cụ thể, ví dụ chế độ tối lúc 19:30.",
+      animationsTitle: "Hoạt ảnh mèo và chó:", animationsText: "Giữ đồng hồ chạy để xem hoạt ảnh mèo và chó dễ thương xuất hiện theo lịch trình trong suốt cả ngày.",
+      saveTitle: "Tự động lưu cài đặt:", saveText: "Thành phố, kích thước cửa sổ và cài đặt màu của bạn được lưu tự động để sử dụng hàng ngày."
+    },
+    ko: {
+      lang: "언어", title: "Cat and Dog World Clock 사용 방법",
+      intro: "<strong>Cat and Dog World Clock</strong>에 오신 것을 환영합니다. 화면에서 하루 종일 사용할 수 있는 간단하고 맞춤형 아날로그 세계 시계입니다.",
+      citiesTitle: "50개 이상 도시 확인:", citiesText: "전 세계 주요 도시의 실시간 아날로그 시계를 한 화면에서 볼 수 있습니다.",
+      minimalTitle: "미니멀 모드:", minimalText: "<em>Make It Minimal</em> 버튼을 눌러 레이아웃을 축소하고 방해 없는 작업 환경으로 단순화하세요.",
+      colorsTitle: "사용자 지정 색상 및 일일 테마:", colorsText: "배경색을 쉽게 변경하거나 매일 자동 테마를 사용하고, 19:30의 다크 모드처럼 시간별 테마를 설정할 수 있습니다.",
+      animationsTitle: "고양이와 강아지 애니메이션:", animationsText: "시계를 계속 실행하면 하루 중 예약된 시간에 귀여운 고양이와 강아지 애니메이션을 볼 수 있습니다.",
+      saveTitle: "설정 자동 저장:", saveText: "선택한 도시, 창 크기 및 색상 설정은 매일 계속 사용할 수 있도록 자동 저장됩니다."
+    },
+    es: {
+      lang: "Idioma", title: "Cómo usar Cat and Dog World Clock",
+      intro: "Bienvenido a <strong>Cat and Dog World Clock</strong>, un reloj mundial analógico sencillo y personalizable diseñado para permanecer abierto en la pantalla todo el día.",
+      citiesTitle: "Más de 50 ciudades:", citiesText: "Consulta relojes analógicos en tiempo real de las principales ciudades del mundo de un solo vistazo.",
+      minimalTitle: "Modo minimalista:", minimalText: "Haz clic en <em>Make It Minimal</em> para reducir y simplificar el diseño y trabajar sin distracciones.",
+      colorsTitle: "Colores personalizados y temas diarios:", colorsText: "Cambia fácilmente el fondo, usa temas automáticos diarios o establece temas por hora, como el modo oscuro a las 19:30.",
+      animationsTitle: "Animaciones de gatos y perros:", animationsText: "Mantén el reloj abierto para ver animaciones adorables en horarios programados durante el día.",
+      saveTitle: "Guardar ajustes automáticamente:", saveText: "Tus ciudades, el tamaño de ventana y los colores preferidos se guardan automáticamente para un uso diario continuo."
+    },
+    pt: {
+      lang: "Idioma", title: "Como usar o Cat and Dog World Clock",
+      intro: "Bem-vindo ao <strong>Cat and Dog World Clock</strong>, um relógio mundial analógico simples e personalizável para deixar aberto na tela o dia inteiro.",
+      citiesTitle: "Mais de 50 cidades globais:", citiesText: "Veja relógios analógicos em tempo real das principais cidades do mundo em uma única tela.",
+      minimalTitle: "Modo mínimo:", minimalText: "Clique em <em>Make It Minimal</em> para reduzir e simplificar o layout em um ambiente de trabalho sem distrações.",
+      colorsTitle: "Cores personalizadas e temas diários:", colorsText: "Altere o fundo facilmente, use temas diários automáticos ou defina temas por horário, como o modo escuro às 19:30.",
+      animationsTitle: "Animações de gatos e cães:", animationsText: "Mantenha o relógio aberto para ver animações fofas de gatos e cães em horários programados ao longo do dia.",
+      saveTitle: "Salvar configurações automaticamente:", saveText: "As cidades escolhidas, o tamanho da janela e as cores preferidas são salvas automaticamente para uso diário."
+    }
+  };
+
+  const select = document.getElementById("manualLanguage");
+  if (!select) return;
+
+  function setManualText(language) {
+    const text = manualTranslations[language] || manualTranslations.en;
+    document.documentElement.lang = language;
+    document.getElementById("manualLanguageLabel").textContent = text.lang;
+    document.getElementById("manualTitle").textContent = text.title;
+    document.getElementById("manualIntro").innerHTML = text.intro;
+    document.getElementById("manualCitiesTitle").textContent = text.citiesTitle;
+    document.getElementById("manualCitiesText").textContent = text.citiesText;
+    document.getElementById("manualMinimalTitle").textContent = text.minimalTitle;
+    document.getElementById("manualMinimalText").innerHTML = text.minimalText;
+    document.getElementById("manualColorsTitle").textContent = text.colorsTitle;
+    document.getElementById("manualColorsText").textContent = text.colorsText;
+    document.getElementById("manualAnimationsTitle").textContent = text.animationsTitle;
+    document.getElementById("manualAnimationsText").textContent = text.animationsText;
+    document.getElementById("manualSaveTitle").textContent = text.saveTitle;
+    document.getElementById("manualSaveText").textContent = text.saveText;
+  }
+
+  let savedLanguage = "en";
+  try {
+    savedLanguage = localStorage.getItem("worldClockManualLanguage") || "en";
+  } catch (_) {}
+
+  if (!manualTranslations[savedLanguage]) savedLanguage = "en";
+  select.value = savedLanguage;
+  setManualText(savedLanguage);
+
+  select.addEventListener("change", () => {
+    const language = select.value;
+    setManualText(language);
+    try {
+      localStorage.setItem("worldClockManualLanguage", language);
+    } catch (_) {}
+  });
+})();
+</script>
 
 </body>
 </html>
