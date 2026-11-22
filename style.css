@@ -121,6 +121,7 @@
     display: flex; flex: 1 1 100%; flex-wrap: wrap; justify-content: center;
     gap: 8px 16px;
   }
+  .city-links.brand-city-links { justify-content: flex-start; }
   .city-links a { color: #475569; text-decoration: none; }
   .city-links a:hover, .city-links a[aria-current="page"] { color: #1d4ed8; text-decoration: underline; }
   .manual-section {
