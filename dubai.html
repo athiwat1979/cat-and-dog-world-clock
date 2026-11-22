@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- SEO Basic Tags -->
+<title>Dubai World Clock | Cat and Dog World Clock</title>
+<meta name="description" content="See the current local time in Dubai, United Arab Emirates with a customizable analog world clock, cat and dog styles, and personal alarms.">
+<meta name="keywords" content="world clock, Dubai local time, United Arab Emirates time, analog city clock, cat and dog clock">
+<meta name="author" content="Athiwat">
+<link rel="canonical" href="https://athiwat1979.github.io/cat-and-dog-world-clock/dubai.html">
+<link rel="icon" href="data:,">
+
+
+<!-- Open Graph (สำหรับเวลาแชร์ลิงก์ลง Facebook, Line, X) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dubai World Clock | Cat and Dog World Clock">
+<meta property="og:url" content="https://athiwat1979.github.io/cat-and-dog-world-clock/dubai.html">
+<meta property="og:description" content="See the current local time in Dubai, United Arab Emirates with a customizable analog world clock, cat and dog styles, and personal alarms.">
+<meta property="og:image" content="https://athiwat1979.github.io/cat-and-dog-world-clock/Picture/og-image.jpg">
+
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-default-city="dubai">
+<header class="topbar">
+  <div class="brand-header">
+    <a class="brand-home" href="index.html" aria-label="Cat and Dog World Clock home">
+    <div class="brand-lockup">
+    <div class="brand-pet-stage" id="brandPetStage" aria-hidden="true">
+      <div class="brand-pet-slot" id="brandPetSlot" data-pet-name="Pom">
+        <img id="brandPetImage" src="Picture/pom-transparent.webp" alt="Pom dog">
+        <video id="brandPetVideo" muted playsinline autoplay loop preload="none" hidden></video>
+      </div>
+    </div>
+      <h1><span class="brand-pets">Dubai</span> <span class="brand-clock">World Clock</span></h1>
+    </div>
+    </a>
+    <nav class="city-links brand-city-links" aria-label="World clocks by city">
+      <a href="tokyo.html">Tokyo</a>
+      <a href="london.html">London</a>
+      <a href="new-york.html">New York</a>
+      <a href="seoul.html">Seoul</a>
+      <a href="paris.html">Paris</a>
+      <a href="sydney.html">Sydney</a>
+      <a href="singapore.html">Singapore</a>
+      <a href="bangkok.html">Bangkok</a>
+      <a href="los-angeles.html">Los Angeles</a>
+      <a href="dubai.html" aria-current="page">Dubai</a>
+    </nav>
+  </div>
+  <div class="actions">
+    <div class="add-clock-wrap">
+      <button class="button primary" id="addClock">+ Add Clock</button>
+      <p class="empty-callout" id="emptyMessage" role="status" hidden>
+        <span class="step-number" aria-hidden="true"><span class="step-digit">1</span></span>
+        <span>No clocks yet. Click Add Clock to start.</span>
+        <span class="empty-callout-hand" aria-hidden="true">👆</span>
+      </p>
+    </div>
+    <button class="button" id="clockCustomize" type="button">Clock Customize</button>
+    <button class="button" id="openMini">Make it minimal</button>
+  </div>
+</header>
+<main>
+  <section class="grid" id="clockGrid" aria-label="World clocks"></section>
+<section class="city-summary" aria-labelledby="citySummaryTitle">
+  <h2 id="citySummaryTitle">Current time in Dubai</h2>
+  <p><strong>Time zone:</strong> Asia/Dubai. <strong>UTC offset:</strong> UTC+04:00 year-round (Gulf Standard Time), with no daylight-saving changes. Dubai is a coastal city and major business centre in the United Arab Emirates. Its local clock stays on Gulf Standard Time year-round.</p>
+</section>
+</main>
+<footer class="page-footer">
+  <span id="viewCount" class="view-count" title="Counts page loads in this browser only, including refreshes" hidden>View Count: 0</span>
+  <div class="footer-slot" id="footerSlot" aria-label="Additional footer content"></div>
+  <nav class="footer-links" aria-label="Footer">
+    <a href="about.html">About</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="https://github.com/athiwat1979/cat-and-dog-world-clock/issues/new?title=Feedback%20or%20Feature%20Request" target="_blank" rel="noopener noreferrer">Feedback / Request</a>
+  </nav>
+</footer>
+<dialog id="addDialog">
+  <form method="dialog" id="addForm">
+    <h2>Add a city clock</h2>
+    <label for="citySearch">Search City</label>
+    <div class="search-city-guide" id="searchCityGuide" hidden aria-hidden="true">
+      <span class="step-number"><span class="step-digit">2</span></span>
+      <span class="search-city-hand">👇</span>
+    </div>
+    <input id="citySearch" type="search" placeholder="Type a city name" autocomplete="off">
+    <label for="citySelect">City</label>
+    <select id="citySelect"></select>
+    <p id="citySearchEmpty" class="dialog-error" role="status" hidden>No matching cities available.</p>
+    <div class="dialog-actions">
+      <button class="button" value="cancel">Cancel</button>
+      <button class="button primary" id="confirmAdd" value="default"><span class="step-number" id="confirmAddStep" hidden aria-hidden="true"><span class="step-digit">3</span></span><span id="confirmAddHand" hidden aria-hidden="true">👇</span>Add Clock</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="clockCustomizeDialog">
+  <form id="clockCustomizeForm">
+    <h2 id="clockCustomizeTitle">Clock Customize</h2>
+    <div class="dialog-field" id="customCityField">
+      <label for="customCityName">City name</label>
+      <input id="customCityName" type="text" maxlength="60" autocomplete="off">
+    </div>
+    <fieldset class="dialog-field">
+      <legend>GMT offset from Greenwich</legend>
+      <div class="offset-fields">
+        <label for="offsetSign">Sign
+          <select id="offsetSign"><option value="1">+</option><option value="-1">−</option></select>
+        </label>
+        <label for="offsetHours">Hours
+          <input id="offsetHours" type="number" min="0" max="14" step="1" value="0">
+        </label>
+        <label for="offsetMinutes">Minutes
+          <input id="offsetMinutes" type="number" min="0" max="59" step="1" value="0">
+        </label>
+      </div>
+    </fieldset>
+    <p id="clockCustomizeError" class="dialog-error" role="alert" hidden></p>
+    <div class="dialog-actions">
+      <button class="button" id="cancelClockCustomize" type="button">Cancel</button>
+      <button class="button primary" id="saveClockCustomize" type="button">Save</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="dialStyleDialog" aria-labelledby="dialStyleTitle">
+  <h2 id="dialStyleTitle">Choose a clock face</h2>
+  <div class="dial-style-grid" id="dialStyleGrid"></div>
+  <div class="dialog-actions">
+    <button class="button" id="closeDialStyles" type="button">Close</button>
+  </div>
+</dialog>
+<dialog id="alarmDialog" aria-labelledby="alarmDialogTitle">
+  <h2 id="alarmDialogTitle">Alarm</h2>
+  <p id="alarmDialogMessage"></p>
+  <div class="dialog-actions"><button class="button primary" id="stopAlarm" type="button">Stop alarm</button></div>
+</dialog>
+
+
+
+
+
+<script src="app.js" defer></script>
+</body>
+</html>
