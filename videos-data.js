@@ -12,5 +12,12 @@ const PET_VIDEOS = [
     date: "2026-11-22",
     src: "videos/Leo chef.mp4",
     poster: ""
+  },
+  {
+    id: "2026-11-26-leo-pom-tokyo",
+    title: "Leo and Pom Pom in Tokyo",
+    date: "2026-11-26",
+    src: "videos/Leo and Pom Pom in Tokyo.mp4",
+    poster: ""
   }
 ];
